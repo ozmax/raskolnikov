@@ -62,7 +62,11 @@ class OneDirection(NavigationBase):
             self.last_direction = choice_name
         choices = self.get_choices()
         if self.last_direction in choices:
-            print 'going straigjt'
             choice = choices[self.last_direction]
+        if self.last_direction not in choices:
+            import random
+            choice_name = random.choice(choices.keys())
+            choice = choices[choice_name]
+            self.last_direction = choice_name
         self.current_pos = choice
         return choice
