@@ -1,11 +1,18 @@
-import copy
-
-
 class Robot(object):
 
     def __init__(self, maze, spaces, walls, goal, initial_pos,  Navigation):
 
+        def normalize_maze(maze):
+            norm_maze = []
+            for line in maze:
+                new_line = [char for char in line]
+                norm_maze.append(new_line)
+            return norm_maze
+
+        maze = normalize_maze(maze)
         self.navigation = Navigation(maze, spaces, walls, goal, initial_pos)
+        self.maze = maze
+        self.current_pos = initial_pos
 
     def print_pretty(self, maze):
         pmaze = ''
@@ -15,13 +22,16 @@ class Robot(object):
             pmaze += pline
         return pmaze
 
-    def move(self):
-        # choice = self.get_random(self.get_choices())
-        new_position = self.navigation.move()
-        self.current_pos = new_position
+    def get_path(self):
+        path = self.navigation.calculate_path()
 
-    def get_current(self):
-        maze = copy.deepcopy(self.navigation.maze)
-        maze[self.navigation.current_pos[0]][self.navigation.current_pos[1]]\
-            = 'X'
-        return self.print_pretty(maze)
+        return path
+
+    def move(self):
+        move = self.navigation.get_next_move()
+        self.maze[self.current_pos[0]][self.current_pos[1]] = ' '
+        self.current_pos = move
+        self.maze[move[0]][move[1]] = 'X'
+
+    def print_current_pos(self):
+        return self.print_pretty(self.maze)
